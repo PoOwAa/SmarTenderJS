@@ -1,0 +1,29 @@
+{
+  "name": "smartenderjs",
+  "version": "1.0.0",
+  "description": "Smart Bartender written in NodeJS",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PoOwAa/SmarTenderJS.git"
+  },
+  "keywords": [
+    "SmarTender",
+    "Bartender",
+    "Smart"
+  ],
+  "author": "Raymund Ács",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PoOwAa/SmarTenderJS/issues"
+  },
+  "homepage": "https://github.com/PoOwAa/SmarTenderJS#readme",
+  "dependencies": {
+    "onoff": "^5.0.0",
+    "pino": "^5.13.5",
+    "pino-pretty": "^3.3.0"
+  }
+}
