@@ -20,12 +20,12 @@ const PIPES = {
   PIPE_3,
   PIPE_4,
   PIPE_5,
-  PIPE_6
+  PIPE_6,
 };
 
 module.exports = {
   RELAY_OFF,
   RELAY_ON,
   PIPES,
-  FLOW_RATE
+  FLOW_RATE,
 };

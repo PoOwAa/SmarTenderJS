@@ -1,12 +1,19 @@
-const { Gpio } = require("onoff");
-const { RELAY_OFF, RELAY_ON, PIPES, FLOW_RATE } = require("./constants");
-const sleep = require("./sleep");
-const logger = require("./logger")("smarTender");
-const { drinkOptions } = require("./drinks");
+const { Gpio } = require('onoff');
+const { RELAY_OFF, RELAY_ON, PIPES, FLOW_RATE } = require('./constants');
+const sleep = require('./sleep');
+const logger = require('./logger')('smarTender');
+const { drinkOptions } = require('./drinks');
 
 class SmarTender {
   constructor() {
     this.pipes = {};
+    this.isRunning = false;
+  }
+
+  reset() {
+    this.isRunning = false;
+    this.pipes = {};
+    this.init();
   }
 
   /**
@@ -31,13 +38,14 @@ class SmarTender {
    * Connecting to pipes
    */
   async init() {
-    logger.debug("Initialize pipes...");
+    logger.info('Initialize pipes...');
     for (const pipe in PIPES) {
       logger.debug(`${pipe} initailized`);
-      this.pipes[pipe] = new Gpio(PIPES[pipe], "out");
+      this.pipes[pipe] = new Gpio(PIPES[pipe], 'out');
       this.turnOffPipe(pipe);
-      await sleep(300);
+      // await sleep(300);
     }
+    logger.info('Initailization ready');
   }
 
   /**
@@ -72,20 +80,24 @@ class SmarTender {
    * a chance check it manually.
    */
   async checkPipes() {
-    try {
-      logger.debug("Checking pipes...");
-      for (let pipe in PIPES) {
-        this.turnOnPipe(pipe);
-        await sleep(500);
-      }
-      for (let pipe in PIPES) {
-        this.turnOffPipe(pipe);
-        await sleep(500);
-      }
-      logger.debug("Pipes are working!");
-    } catch (err) {
-      logger.error(`Pipes are not working correctly`, err);
-      process.exit(1);
+    if (!this.isRunning) {
+      this.isRunning = true;
+      logger.debug('Checking pipes...');
+      (async () => {
+
+        for (let pipe in PIPES) {
+          this.turnOnPipe(pipe);
+          await sleep(500);
+        }
+        for (let pipe in PIPES) {
+          this.turnOffPipe(pipe);
+          await sleep(500);
+        }
+        logger.debug('Pipes are working!');
+        this.isRunning = false;
+      })();
+    } else {
+      throw new Error(`SmarTender is busy, please wait...`);
     }
   }
 
@@ -95,12 +107,21 @@ class SmarTender {
    * @param {number} ms Time to clean
    */
   async clean(ms) {
-    for (let pipe in PIPES) {
-      this.turnOnPipe(pipe);
-    }
-    await sleep(ms);
-    for (let pipe in PIPES) {
-      this.turnOffPipe(pipe);
+    if (!this.isRunning) {
+      this.isRunning = true;
+      (async () => {
+
+        for (let pipe in PIPES) {
+          this.turnOnPipe(pipe);
+        }
+        await sleep(ms);
+        for (let pipe in PIPES) {
+          this.turnOffPipe(pipe);
+        }
+        this.isRunning = false;
+      })();
+    } else {
+      throw new Error(`SmarTender is busy, please wait...`);
     }
   }
 
@@ -110,17 +131,29 @@ class SmarTender {
    * @param {Drink} drink Drink object
    */
   async makeDrink(drink) {
-    const ingredients = drink.ingredients;
-    for (let ingredient in ingredients) {
-      for (let drinkPipe in drinkOptions) {
-        if (ingredient === drinkPipe) {
-          logger.debug("Flow ingredient", ingredient);
-          this.flowDrink(
-            drinkOptions[drinkPipe].pipe,
-            ingredients[ingredient] * (1 / FLOW_RATE)
-          );
+    logger.info(`Creating `, drink);
+    if (!this.isRunning) {
+      logger.debug('Nothing running, starting to mix...');
+      this.isRunning = true;
+      (async () => {
+
+
+        const ingredients = drink.ingredients;
+        const promises = [];
+        for (let ingredient in ingredients) {
+          for (let drinkPipe in drinkOptions) {
+            if (ingredient === drinkPipe) {
+              logger.info('Flow ingredient', ingredient);
+              promises.push(this.flowDrink(drinkOptions[drinkPipe].pipe, ingredients[ingredient] * (1 / FLOW_RATE)));
+            }
+          }
         }
-      }
+        Promise.all(promises).then(() => {
+          this.isRunning = false;
+        });
+      })();
+    } else {
+      throw new Error(`SmarTender is busy, please wait...`);
     }
   }
 }

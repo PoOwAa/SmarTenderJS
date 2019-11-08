@@ -3,15 +3,15 @@ const drinks = {
     name: "Rum & Coke",
     ingredients: {
       rum: 50,
-      coke: 150
-    }
+      coke: 150,
+    },
   },
   ginTonic: {
     name: "Gin & Tonic",
     ingredients: {
       gin: 50,
-      tonic: 150
-    }
+      tonic: 150,
+    },
   },
   longIsland: {
     name: "Long Island",
@@ -21,37 +21,37 @@ const drinks = {
       vodka: 15,
       tequila: 15,
       coke: 100,
-      oj: 30
-    }
+      // oj: 30,
+    },
   },
-  screwDriver: {
-    name: "Screwdriver",
-    ingredients: {
-      vodka: 50,
-      oj: 150
-    }
-  },
-  margarita: {
-    name: "Margarita",
-    ingredients: {
-      tequila: 50,
-      mmix: 150
-    }
-  },
-  ginJuice: {
-    name: "Gin & Juice",
-    ingredients: {
-      gin: 50,
-      oj: 150
-    }
-  },
-  tequilaSunrise: {
-    name: "Tequilia Sunrise",
-    ingredients: {
-      tequila: 50,
-      oj: 150
-    }
-  }
+  // screwDriver: {
+  //   name: "Screwdriver",
+  //   ingredients: {
+  //     vodka: 50,
+  //     oj: 150,
+  //   },
+  // },
+  // margarita: {
+  //   name: "Margarita",
+  //   ingredients: {
+  //     tequila: 50,
+  //     mmix: 150,
+  //   },
+  // },
+  // ginJuice: {
+  //   name: "Gin & Juice",
+  //   ingredients: {
+  //     gin: 50,
+  //     oj: 150,
+  //   },
+  // },
+  // tequilaSunrise: {
+  //   name: "Tequilia Sunrise",
+  //   ingredients: {
+  //     tequila: 50,
+  //     oj: 150,
+  //   },
+  // }
 };
 
 const drinkOptions = {
@@ -61,8 +61,6 @@ const drinkOptions = {
   tequila: { name: "Tequila", pipe: "PIPE_4" },
   tonic: { name: "Tonic water", pipe: "PIPE_5" },
   coke: { name: "Coke", pipe: "PIPE_6" },
-  oj: { name: "Orange Juice", pipe: "PIPE_7" },
-  mmix: { name: "Margarita Mix", pipe: "PIPE_8" }
 };
 
 module.exports = {
