@@ -1,71 +1,96 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title><%= title %></title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css' />
+
 </head>
 
 <body class="jumbotron text-center">
   <h1><%= title %></h1>
-  <p>Welcome to <%= title %>, chose a drink:</p>
+  <p>Welcome to <%= title %>, choose a drink:</p>
 
   <!-- <%= JSON.stringify(drinks) %> -->
-
-  <ul>
-    <% for (const drink in drinks) { %>
-    <li>
-      <button type="submit" class="btn btn-outline-primary">
-        <%= drinks[drink].name %> (
-        <% for (const ingredient in drinks[drink].ingredients) { %>
-        <!-- Drink name -->
-        <%= drinkOptions[ingredient].name %>
-        <!-- Ingredients -->
-        <%= drinks[drink].ingredients[ingredient] %> ml
-        <% } %>
-        )
-      </button>
-    </li>
-    <% } %>
-  </ul>
   <div class="album py-5 bg-light">
     <div class="container">
 
       <div class="row">
-        <div class="col-md-4">
+
+        <% for (const drink in drinks) { %>
+
+
+
+
+        <div class="col-lg-4 col-md-6 col-sm-12">
           <div class="card mb-4 shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail">
-              <title>Placeholder</title>
-              <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
-                dy=".3em">Thumbnail</text>
-            </svg>
+            <img style="max-height:300px" width="auto" src="<%= drinks[drink].image %>" alt="">
+
+            <%= drinks[drink].name %>
             <div class="card-body">
-              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                content. This content is a little bit longer.</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-secondary">Make the drink!</button>
-                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                </div>
-                <small class="text-muted">9 mins</small>
+              <p class="card-text">
+                <% if (drink !== 'eniko') { %>
+                <% for (const ingredient in drinks[drink].ingredients) { %>
+                <!-- Drink name -->
+                <%= drinkOptions[ingredient].name %>
+                <!-- Ingredients -->
+                <%= drinks[drink].ingredients[ingredient] %> ml
+                <% } } %>
+              </p>
+              <div class="d-flex justify-content-between align-items-center text-center">
+                <button type="button" class="btn btn-sm btn-outline-secondary createDrink"
+                  data-drink='<%= drink %>'>Make the
+                  drink!</button>
               </div>
             </div>
           </div>
         </div>
+
+        <% } %>
       </div>
     </div>
   </div>
 
-
 </body>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-  integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
   integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
   integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.all.min.js"></script>
+<script>
+  $(function () {
+    $(document).on('click', '.createDrink', function () {
+      var el = $(this);
+      var d = el.attr('data-drink');
+
+
+      $.get('/commands/mix/' + d).then(function (r) {
+        if (r.status === "success") {
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Cool',
+            text: r.message,
+          })
+        } else {
+          Swal.fire({
+            icon: 'warning',
+            title: 'A manóba',
+            text: r.message,
+          })
+
+        }
+      })
+    });
+  });
+</script>
 
 </html>
