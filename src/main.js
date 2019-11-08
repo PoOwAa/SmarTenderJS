@@ -11,4 +11,7 @@ const { drinks } = require("./drinks");
   await smarTender.clean(5000);
   logger.info("Creating coctails...");
   await smarTender.makeDrink(drinks.rumCoke);
+  await smarTender.makeDrink(drinks.ginTonic);
+  await smarTender.makeDrink(drinks.longIsland);
+  await smarTender.makeDrink(drinks.tequilaSunrise);
 })();
